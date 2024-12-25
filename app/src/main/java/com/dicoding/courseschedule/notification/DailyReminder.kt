@@ -85,6 +85,7 @@ class DailyReminder : BroadcastReceiver() {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         content.forEach {
             val courseData = String.format(timeString, it.startTime, it.endTime, it.courseName)
+            Log.d("DailyReminder", "Course data: $courseData")//cobea
             notificationStyle.addLine(courseData)
         }
         val intentHome = Intent(context, HomeActivity::class.java)
@@ -111,6 +112,7 @@ class DailyReminder : BroadcastReceiver() {
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, importance)
             notification.setChannelId(NOTIFICATION_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
+            Log.d("DailyReminder", "Notification channel created")
         }
         val notificationBuilder = notification.build()
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder)

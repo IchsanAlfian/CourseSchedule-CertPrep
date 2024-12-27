@@ -19,7 +19,7 @@ interface CourseDao {
     fun getAll(query: SupportSQLiteQuery): PagingSource<Int, Course>
     @Query("SELECT * FROM course WHERE id = :id")
     fun getCourse(id: Int): LiveData<Course>
-    @Query("SELECT * FROM course WHERE day = :day")
+    @Query("SELECT * FROM course WHERE day = :day ORDER BY startTime ASC")
     fun getTodaySchedule(day: Int): List<Course>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(course: Course)

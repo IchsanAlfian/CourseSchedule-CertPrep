@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.dicoding.courseschedule.R
 import com.dicoding.courseschedule.data.Course
@@ -17,16 +18,18 @@ import com.dicoding.courseschedule.ui.home.HomeActivity
 import com.dicoding.courseschedule.util.NOTIFICATION_CHANNEL_ID
 import com.dicoding.courseschedule.util.NOTIFICATION_CHANNEL_NAME
 import com.dicoding.courseschedule.util.NOTIFICATION_ID
+import com.dicoding.courseschedule.util.QueryType
 import com.dicoding.courseschedule.util.executeThread
 import java.util.Calendar
 
 class DailyReminder : BroadcastReceiver() {
-
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("DailyReminder", "onReceive triggered")
         executeThread {
             val repository = DataRepository.getInstance(context)
             val courses = repository?.getTodaySchedule()
 
+            Log.d("DailyReminder", "Courses retrieved: ${courses?.size ?: 0}")
             courses?.let {
                 if (it.isNotEmpty()) showNotification(context, it)
             }
@@ -34,6 +37,7 @@ class DailyReminder : BroadcastReceiver() {
     }
 
     //TODO 12 : Implement daily reminder for every 06.00 a.m using AlarmManager
+    @RequiresApi(Build.VERSION_CODES.M)
     fun setDailyReminder(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, DailyReminder::class.java)
@@ -55,10 +59,17 @@ class DailyReminder : BroadcastReceiver() {
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
         Log.d("DailyReminder", "Alarm set for: ${calendar.timeInMillis}") // Log waktu alarm
-        alarmManager.setInexactRepeating(
+        //coba gantiu sebelumnya inexcatrepeating
+//        alarmManager.setInexactRepeating(
+//            AlarmManager.RTC_WAKEUP,
+//            calendar.timeInMillis,
+//            AlarmManager.INTERVAL_DAY,
+//            pendingIntent
+//        )
+
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
 
